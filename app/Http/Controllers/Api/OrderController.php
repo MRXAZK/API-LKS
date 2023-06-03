@@ -79,24 +79,20 @@ class OrderController extends Controller
         return response()->json(['message' => 'Order created successfully', 'total_price' => $subtotal], 201);
     }
 
-    public function index()
+    public function getOrder($orderId = null)
     {
         // Mendapatkan ID customer yang sedang terautentikasi
         $customerId = Auth::id();
 
-        // Mengambil semua pesanan (order) milik customer dengan ID tersebut, termasuk detail dan menu terkait
-        $orders = Order::where('IdCustomer', $customerId)->with('details.menu')->get();
+        // Jika orderId tidak diberikan, maka ambil semua pesanan milik customer
+        if ($orderId === null) {
+            $orders = Order::where('IdCustomer', $customerId)->with('details.menu')->get();
 
-        // Mengirimkan respon dengan data pesanan dalam format JSON
-        return response()->json(['data' => $orders]);
-    }
+            // Mengirimkan respon dengan data pesanan dalam format JSON
+            return response()->json(['data' => $orders]);
+        }
 
-    public function show($orderId)
-    {
-        // Mendapatkan ID customer yang sedang terautentikasi
-        $customerId = Auth::id();
-
-        // Mencari pesanan (order) dengan ID yang diberikan, yang juga dimiliki oleh customer dengan ID tersebut, termasuk detail dan menu terkait
+        // Jika orderId diberikan, maka cari pesanan spesifik
         $order = Order::where('IdOrder', $orderId)->where('IdCustomer', $customerId)->with('details.menu')->first();
 
         // Jika pesanan tidak ditemukan, kirimkan respon dengan error 404
@@ -108,58 +104,6 @@ class OrderController extends Controller
         return response()->json(['data' => $order]);
     }
 
-    // public function update(Request $request, $orderId)
-    // {
-    //     // Mendapatkan ID customer yang sedang terautentikasi
-    //     $customerId = Auth::id();
-
-    //     // Mencari pesanan (order) dengan ID yang diberikan, yang juga dimiliki oleh customer dengan ID tersebut
-    //     $order = Order::where('IdOrder', $orderId)->where('IdCustomer', $customerId)->first();
-
-    //     // Jika pesanan tidak ditemukan, kirimkan respon dengan error 404
-    //     if (!$order) {
-    //         return response()->json(['message' => 'Order not found'], 404);
-    //     }
-
-    //     // Validasi input menggunakan Validator
-    //     $validator = Validator::make($request->all(), [
-    //         'idmenu' => 'required',
-    //         'quantity' => 'required|integer|min:1',
-    //     ]);
-
-    //     // Jika validasi gagal, kirimkan respon dengan error 422
-    //     if ($validator->fails()) {
-    //         return response()->json($validator->errors(), 422);
-    //     }
-
-    //     // Mendapatkan ID menu dan kuantitas dari request
-    //     $menuId = $request->input('idmenu');
-    //     $quantity = $request->input('quantity');
-
-    //     // Mencari menu berdasarkan ID
-    //     $menu = Menu::find($menuId);
-
-    //     // Jika menu tidak ditemukan, kirimkan respon dengan error 404
-    //     if (!$menu) {
-    //         return response()->json(['message' => 'Menu not found'], 404);
-    //     }
-
-    //     // Menghitung harga total untuk menu tersebut
-    //     $price = $menu->Price;
-    //     $subtotal = $price * $quantity;
-
-    //     // Memperbarui atau membuat entitas DetailOrder baru
-    //     DetailOrder::updateOrCreate(
-    //         ['IdOrder' => $order->IdOrder, 'IdMenu' => $menuId],
-    //         ['Quantity' => $quantity, 'Price' => $price]
-    //     );
-
-    //     // Mengupdate subtotal order
-    //     $order->update(['SubTotal' => $subtotal]);
-
-    //     // Mengirimkan respon dengan pesan sukses dan total harga dalam format JSON
-    //     return response()->json(['message' => 'Order updated successfully', 'total_price' => $subtotal]);
-    // }
 
     public function destroy($orderId)
     {

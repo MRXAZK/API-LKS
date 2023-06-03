@@ -32,13 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/order', [\App\Http\Controllers\Api\OrderController::class, 'create']);
 
     // Mendapatkan semua pesanan
-    Route::get('/order', [\App\Http\Controllers\Api\OrderController::class, 'index']);
+    Route::get('/order', [\App\Http\Controllers\Api\OrderController::class, 'getOrder']);
 
     // Mendapatkan pesanan spesifik
-    Route::get('/order/{orderId}', [\App\Http\Controllers\Api\OrderController::class, 'show']);
-
-    // // Memperbarui pesanan
-    // Route::put('/order/{orderId}', [\App\Http\Controllers\Api\OrderController::class, 'update']);
+    Route::get('/order/{orderId}', [\App\Http\Controllers\Api\OrderController::class, 'getOrder']);
 
     // Menghapus pesanan
     Route::delete('/order/{orderId}', [\App\Http\Controllers\Api\OrderController::class, 'destroy']);

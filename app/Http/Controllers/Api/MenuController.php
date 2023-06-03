@@ -12,7 +12,7 @@ class MenuController extends Controller
     public function index()
     {
         // Mengambil data menu dari database dengan kolom yang dipilih: IdMenu, Price, dan Image
-        $menus = Menu::select('IdMenu', 'Price', 'Image')->get();
+        $menus = Menu::select('IdMenu', 'Name', 'Price', 'Image')->get();
 
         // Kirimkan respons dalam format JSON dengan data menu
         return response()->json([
